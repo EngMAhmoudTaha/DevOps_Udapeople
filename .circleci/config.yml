@@ -313,13 +313,13 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
-      - attach_workspace:
-          at: ~/
       - run:
           name: Install dependencies
           command: |
             # your code here
             apk add --update --no-cache tar gzip  ansible nodejs npm curl
+      - attach_workspace:
+          at: ~/
       - run:
           name: Get backend url
           command: |
