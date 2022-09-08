@@ -59,12 +59,16 @@ commands:
           # Add when this will run
           when: on_fail
           command: |
-            #  cd ~/project/backend
-            #  npm install
-            #  Add revert code here. You can find this in the Getting Started section.
-              cd ~/project/backend
-              npm install
-              npm run migrations:revert
+            # Your Memstash or kvdb.io GET URL code goes here
+            # Example: kvdb.io
+            SUCCESS=$(curl --insecure  https://kvdb.io/5bgbf9vvtDUXH15b5BsZ5P/migration_<< parameters.workflow_id >>)
+            # Logic for reverting the database state
+            if (( $SUCCESS == 1 ));
+            then
+                cd ~/project/backend
+                npm install
+                npm run migration:revert
+            fi
          
 jobs:
   build-frontend:
@@ -398,6 +402,9 @@ jobs:
             sudo apt update
             sudo apt install -y python3 ansible
       - install_awscli
+      # attach workspace
+      - attach_workspace:
+          at: ~/
       - run:
           name: Get backend url
           command: |
@@ -405,12 +412,7 @@ jobs:
             export BACKEND_IP=$(aws ec2 describe-instances \
                 --query 'Reservations[*].Instances[*].PublicIpAddress' \
                 --filters "Name=tag:project,Values=udapeople" \
-                --output text)
-            export API_URL="http://${BACKEND_IP}:3030"
-            echo "API_URL = ${API_URL}"
-            echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
-            cat frontend/.env
-            
+                --output text)    
       - run:
           name: Backend smoke test.
           command: |
@@ -432,7 +434,7 @@ jobs:
             echo ${URL} 
             if curl -s ${URL} | grep "Welcome"
             then
-                # Change this to 0 after the job fails
+              # Change this to 0 after the job fails
               return 1
             else
               return 1
