@@ -285,6 +285,7 @@ jobs:
           name: Run migrations
           command: |
             npm cache clean --force
+            sudo chown -R /usr/local/lib/node_modules/npm/node_modules/abbrev
             rm -rf node_modules
             rm -rf package-lock.json
             cd backend
