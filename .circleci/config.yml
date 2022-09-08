@@ -59,17 +59,10 @@ commands:
           # Add when this will run
           when: on_fail
           command: |
-            # Curl command here to see if there was a successful migration associated with the workflow id, store result in SUCCESS variable
-            SUCCESS = 1
-            if(( $SUCCESS == 1 )); 
-            then
-            #  cd ~/project/backend
-            #  npm install
             #  Add revert code here. You can find this in the Getting Started section.
-              cd ~/project/backend
-              npm install
-              npm run migration:revert
-            fi
+            cd ~/project/backend
+            npm install
+            npm run migration:revert
          
 jobs:
   build-frontend:
@@ -303,7 +296,6 @@ jobs:
             # Your code here
             if grep -q "has been executed successfully." ~/project/backend/migrations.txt
             then
-              touch ~/project/.circleci/outputs/db_migration_success
               curl https://kvdb.io/5bgbf9vvtDUXH15b5BsZ5P/migration_${CIRCLE_WORKFLOW_ID:0:7}  -d '1'
             fi
       # Here's where you will add some code to rollback on failure
