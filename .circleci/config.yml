@@ -317,7 +317,8 @@ jobs:
           name: Install dependencies
           command: |
             # your code here
-            apk add --update --no-cache tar gzip  ansible nodejs npm curl
+            sudo apt update
+            sudo apt install -y python3 ansible
       - install_awscli
       - attach_workspace:
           at: ~/
