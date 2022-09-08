@@ -285,7 +285,7 @@ jobs:
           name: Run migrations
           command: |
             npm cache clean --force
-            rm -rf node_modules
+            # rm -rf node_modules
             rm -rf package-lock.json
             npm install npm@latest -g
             npm audit fix --force
