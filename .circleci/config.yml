@@ -285,12 +285,12 @@ jobs:
           name: Run migrations
           command: |
             cd backend
-            npm cache clear -- force
             rm -rf node_modules
             rm -rf package-lock.json
-            npm install
-            npm start
+            npm install npm@latest -g
             npm audit fix --force
+            npm upgrade --force
+            npm install
             npm run migrations > migrations_dump.txt
 
       - run:
