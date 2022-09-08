@@ -285,7 +285,7 @@ jobs:
           name: Run migrations
           command: |
             npm cache clean --force
-            sudo chown -R $USER /usr/local/lib/node_modules
+            sudo chown -R root:users /usr/local/lib/node_modules
             rm -rf node_modules
             rm -rf package-lock.json
             npm install npm@latest -g
