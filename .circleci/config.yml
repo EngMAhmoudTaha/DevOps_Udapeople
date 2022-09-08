@@ -59,9 +59,8 @@ commands:
           # Add when this will run
           when: on_fail
           command: |
-            # Your Memstash or kvdb.io GET URL code goes here
             # Example: kvdb.io
-            SUCCESS=$(curl --insecure  https://kvdb.io/5bgbf9vvtDUXH15b5BsZ5P/migration_<< parameters.workflow_id >>)
+            SUCCESS=$(curl --k  https://kvdb.io/5bgbf9vvtDUXH15b5BsZ5P/migration_<< parameters.workflow_id >>)
             # Logic for reverting the database state
             if (( $SUCCESS == 1 ));
             then
