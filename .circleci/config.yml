@@ -296,7 +296,7 @@ jobs:
             npm audit fix --force
             # If the "npm audit fix" command above could not fix all critical vulnerabilities, try “npm audit fix --force” again
             npm audit --audit-level=critical
-            npm build 
+            npm run build 
             npm run migrations >> migrations.txt
 
       - run:
