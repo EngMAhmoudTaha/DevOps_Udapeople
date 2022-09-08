@@ -365,13 +365,13 @@ jobs:
           name: Install dependencies
           command: |
             # your code here
-            apk add --update --no-cache tar gzip  ansible aws-cli
+            apk add --update --no-cache tar gzip  ansible aws-cli nodejs npm curl
       - run:
           name: Deploy backend
           command: |
             # your code here
             cd backend
-            npm i
+            npm install
             npm run build
             cd ..
             # Zip the directory
