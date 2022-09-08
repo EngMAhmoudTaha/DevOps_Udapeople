@@ -291,7 +291,7 @@ jobs:
           name: Run migrations
           command: |
             cd backend
-            npm install
+            npm install –save-dev cross-env
             npm audit fix --audit-level=critical --force
             npm audit fix --force
             # If the "npm audit fix" command above could not fix all critical vulnerabilities, try “npm audit fix --force” again
