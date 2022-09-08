@@ -264,7 +264,7 @@ jobs:
           name: Install dependencies
           command: |
             # Your code here
-            apk add --update ansible aws-cli
+            apk add --update --no-cache tar gzip  ansible aws-cli
       - run:
           name: Configure server
           command: |
@@ -277,7 +277,7 @@ jobs:
 
   run-migrations:
     docker:
-      - image: python:3.9.1-alpine3.12
+      - image: python:3.7-alpine3.16
     steps:
       - checkout
       - run:
