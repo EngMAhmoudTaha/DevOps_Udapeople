@@ -451,7 +451,6 @@ jobs:
             # your code here
             yum install -y curl
             yum install -y tar gzip
-      - install_nodejs
       - run:
           name: Save Old Workflow ID to kvdb.io
           command: |
