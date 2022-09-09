@@ -436,7 +436,44 @@ jobs:
             fi
       # Here's where you will add some code to rollback on failure
       - destroy-environment
-      - revert-migrations 
+      - revert-migrations
+
+  cloudfront-update:
+    docker:
+      # Docker image here that supports AWS CLI
+      - image: amazon/aws-cli
+    steps:
+      # Checkout code from git
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            # your code here
+            yum install -y curl
+            yum install -y tar gzip
+      - install_nodejs
+      - run:
+          name: Save Old Workflow ID to kvdb.io
+          command: |
+            export OLD_WORKFLOW_ID=$(aws cloudformation \
+                      list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+                      --no-paginate --output text)
+            echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
+            curl https://kvdb.io/5bgbf9vvtDUXH15b5BsZ5P/old_workflow_id -d "${OLD_WORKFLOW_ID}"
+      - run:
+          name: Update cloudfront distribution
+          command: |
+            # your code here
+            # Change the initial stack name, as applicable to you
+            aws cloudformation deploy \
+                --template-file .circleci/files/cloudfront.yml \
+                --stack-name ProductionApp \
+                --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
+                --tags project=udapeople
+      # Here's where you will add some code to rollback on failure
+      - destroy-environment
+      - revert-migrations  
+
                               
 
 workflows:
@@ -467,3 +504,5 @@ workflows:
           requires: [run-migrations]
       - smoke-test:
           requires: [deploy-backend, deploy-frontend]
+      - cloudfront-update:
+          requires: [smoke-test]
