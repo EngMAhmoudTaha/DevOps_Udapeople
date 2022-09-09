@@ -374,7 +374,7 @@ jobs:
           command: |
             # your code here
             cd backend
-            npm install
+            npm i
             npm run build
             cd ..
             # Zip the directory
