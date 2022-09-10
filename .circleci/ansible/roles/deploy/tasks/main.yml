@@ -4,7 +4,7 @@
   become: true
   shell: |
     pwd
-    tar xvzf ~/artifact.tar.gz -C .
+    tar xvzf artifact.tar.gz -C .
 - name: start server
   become: true
   shell: |
