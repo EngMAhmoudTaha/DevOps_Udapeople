@@ -316,10 +316,6 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
-      - attach_workspace:
-          at: ~/
-      - restore_cache:
-          keys: [frontend-build]
       - run:
           name: Install dependencies
           command: |
@@ -328,6 +324,10 @@ jobs:
             curl -sL https://rpm.nodesource.com/setup_13.x | sudo bash -
             yum install -y nodejs
             node --version
+      - attach_workspace:
+          at: ~/
+      - restore_cache:
+          keys: [frontend-build]
       - run:
           name: Get backend url
           command: |
