@@ -3,7 +3,7 @@
 - name: unzip the artifact.tar.gz
   become: true
   shell: |
-    tar xvzf artifact.tar.gz -C .
+    tar xvzf /home/artifact.tar.gz -C .
 - name: start server
   become: true
   shell: |
