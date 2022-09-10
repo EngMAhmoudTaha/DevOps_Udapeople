@@ -3,10 +3,13 @@
 - name: unzip the artifact.tar.gz
   become: true
   shell: |
-    tar xvzf /home/artifact.tar.gz -C .
+    pwd
+    tar xvzf ~/artifact.tar.gz -C .
 - name: start server
   become: true
   shell: |
+    pwd
+    cd backend
     npm install
     pm2 stop default
     pm2 start npm -- start
