@@ -1,15 +1,17 @@
 ---
+- name: copy dist backend folder to ec2 server
+  become: yes
+  copy:
+    src: ~/project/artifact.tar.gz
+    dest: /home/ubuntu/artifact.tar.gz
 
-- name: unzip the artifact.tar.gz
+- name: prepare binaries
   become: true
   shell: |
-    pwd
+    cd /home/ubuntu
     tar xvzf artifact.tar.gz -C .
 - name: start server
   become: true
   shell: |
-    pwd
-    cd backend
-    npm install
-    pm2 stop default
-    pm2 start npm -- start
+    cd /home/ubuntu
+    pm2 start npm --name backend -- start
