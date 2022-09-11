@@ -72,7 +72,7 @@ commands:
 jobs:
   build-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:latest
     steps:
       - checkout
       - restore_cache:
@@ -90,7 +90,7 @@ jobs:
 
   build-backend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:latest
     steps:
       - checkout
       - restore_cache:
@@ -109,7 +109,7 @@ jobs:
   test-frontend:
     docker:
       # Docker image here
-      - image: circleci/node:13.8.0
+      - image: cimg/node:latest
     steps:
       # Checkout code from git
       - checkout
@@ -131,7 +131,7 @@ jobs:
   test-backend:
     docker:
       # Docker image here
-      - image: circleci/node:13.8.0
+      - image: cimg/node:latest
     steps:
       # Checkout code from git
       - checkout
@@ -154,7 +154,7 @@ jobs:
   scan-frontend:
     docker:
       # Docker image here
-      - image: circleci/node:13.8.0
+      - image: cimg/node:latest
     steps:
       # Checkout code from git
       - checkout
@@ -179,7 +179,7 @@ jobs:
   scan-backend:
     docker:
       # Docker image here
-      - image: circleci/node:13.8.0
+      - image: cimg/node:latest
     steps:
       # Checkout code from git
       - checkout
@@ -203,7 +203,7 @@ jobs:
   deploy-infrastructure:
     docker:
       # Docker image here that supports AWS CLI
-      - image: amazon/aws-cli
+      - image: cimg/node:latest
     steps:
       # Checkout code from git
       - checkout
@@ -228,14 +228,14 @@ jobs:
                 --template-file .circleci/files/frontend.yml \
                 --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
                 --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
-                --tags project=udapeople
+                --tags project=udapeople, ID="${CIRCLE_WORKFLOW_ID:0:7}"
       - run:
           name: Add back-end ip to ansible inventory
           command: |
             # Your code here
             aws ec2 describe-instances \
                 --query 'Reservations[*].Instances[*].PublicIpAddress' \
-                --filters "Name=tag:project,Values=udapeople" \
+                --filters "Name=tag:ID,Values=${CIRCLE_WORKFLOW_ID:0:7}" \
                 --output text >> .circleci/ansible/inventory.txt
                 cat .circleci/ansible/inventory.txt
       - persist_to_workspace:
@@ -276,7 +276,7 @@ jobs:
 
   run-migrations:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/node:latest
     steps:
       - checkout
       - run:
@@ -393,7 +393,7 @@ jobs:
   smoke-test:
     docker:
       # Lightweight Docker image
-      - image: circleci/node:13.8.0 
+      - image: cimg/node:latest 
     steps:
       # Checkout code from git
       - checkout
@@ -455,14 +455,6 @@ jobs:
             yum install -y curl
             yum install -y tar gzip
       - run:
-          name: Save Old Workflow ID to kvdb.io
-          command: |
-            export OLD_WORKFLOW_ID=$(aws cloudformation \
-                      list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-                      --no-paginate --output text)
-            echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
-            curl https://kvdb.io/5bgbf9vvtDUXH15b5BsZ5P/old_workflow_id -d "${OLD_WORKFLOW_ID}"
-      - run:
           name: Update cloudfront distribution
           command: |
             # your code here
@@ -487,24 +479,23 @@ jobs:
           name: Get old stack workflow id
           command: |
             # your code here
-            export STACKS=($(aws cloudformation list-stacks \
-                --query "StackSummaries[*].StackName" \
-                --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
-            echo Stack names: "${STACKS[@]}"
-            export OldWorkflowID=$(curl --insecure https://kvdb.io/5bgbf9vvtDUXH15b5BsZ5P/old_workflow_id)
-            echo Old Workflow ID: $OldWorkflowID 
+            # Fetch the Old workflow ID
+            export OldWorkflowID=$(aws cloudformation \
+                    list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+                    --no-paginate --output text)
+            echo OldWorkflowID: "${OldWorkflowID}"
+            echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
+            # Fetch the stack names          
+            export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+                    --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
+            echo Stack names: "${STACKS[@]}" 
       - run:
           name: Remove old stacks and files
           command: |
-            export STACKS=($(aws cloudformation list-stacks \
-                --query "StackSummaries[*].StackName" \
-                --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
-            echo Stack names: "${STACKS[@]}"
-            export OldWorkflowID=$(curl --insecure https://kvdb.io/5bgbf9vvtDUXH15b5BsZ5P/old_workflow_id)
-            echo Old Workflow ID: $OldWorkflowID 
-            if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
+            if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
             then
-              aws s3 rm "s3://${OldWorkflowID}" --recursive
+              # your code goes here
+              aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
               aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
             fi                    
