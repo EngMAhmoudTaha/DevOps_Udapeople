@@ -406,15 +406,7 @@ jobs:
       - install_awscli
       # attach workspace
       - attach_workspace:
-          at: ~/
-      
-      - run:
-          name: save current workflow_ID
-          command: |
-            # Your code here
-            export workID=${CIRCLE_WORKFLOW_ID:0:7}
-            
-            curl -k https://kvdb.io/5bgbf9vvtDUXH15b5BsZ5P/OldWorkflowID  -d ${workID} 
+          at: ~/ 
       - run:
           name: Backend smoke test.
           command: |
@@ -462,6 +454,13 @@ jobs:
             # your code here
             yum install -y curl
             yum install -y tar gzip
+      - run:
+          name: save current workflow_ID
+          command: |
+            # Your code here
+            export workID=${CIRCLE_WORKFLOW_ID:0:7}
+            echo $workID
+            curl -k https://kvdb.io/5bgbf9vvtDUXH15b5BsZ5P/OldWorkflowID  -d ${workID}
       - run:
           name: Update cloudfront distribution
           command: |
