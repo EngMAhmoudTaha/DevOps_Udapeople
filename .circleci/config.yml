@@ -406,7 +406,13 @@ jobs:
       - install_awscli
       # attach workspace
       - attach_workspace:
-          at: ~/    
+          at: ~/
+      
+      - run:
+          name: save current workflow_ID
+          command: |
+            # Your code here
+            curl -k https://kvdb.io/5bgbf9vvtDUXH15b5BsZ5P/OldWorkflowID  -d '${CIRCLE_WORKFLOW_ID:0:7}'    
       - run:
           name: Backend smoke test.
           command: |
@@ -480,9 +486,7 @@ jobs:
           command: |
             # your code here
             # Fetch the Old workflow ID
-            export OldWorkflowID=$(aws cloudformation \
-                    list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-                    --no-paginate --output text)
+            export OldWorkflowID=$(curl --insecure  https://kvdb.io/5bgbf9vvtDUXH15b5BsZ5P/OldWorkflowID)
             echo OldWorkflowID: "${OldWorkflowID}"
             echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
             # Fetch the stack names          
