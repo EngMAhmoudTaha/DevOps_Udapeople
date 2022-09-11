@@ -412,7 +412,8 @@ jobs:
           name: save current workflow_ID
           command: |
             # Your code here
-            curl -k https://kvdb.io/5bgbf9vvtDUXH15b5BsZ5P/OldWorkflowID  -d ${CIRCLE_WORKFLOW_ID:0:7}   
+            export workID="${CIRCLE_WORKFLOW_ID:0:7}"
+            curl -k https://kvdb.io/5bgbf9vvtDUXH15b5BsZ5P/OldWorkflowID  -d '${workID}'   
       - run:
           name: Backend smoke test.
           command: |
