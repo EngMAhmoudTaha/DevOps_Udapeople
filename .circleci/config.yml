@@ -499,6 +499,7 @@ jobs:
       - run:
           name: Remove old stacks and files
           command: |
+            export OldWorkflowID=$(curl --insecure  https://kvdb.io/5bgbf9vvtDUXH15b5BsZ5P/OldWorkflowID)
             if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
             then
               # your code goes here
